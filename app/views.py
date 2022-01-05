@@ -20,7 +20,7 @@ class ProductView(View):
         laptop = Product.objects.filter(category='L')
 
         return render(request, 'app/home.html', {
-            'topwears':topwears, 'bottomwears':bottomwears, 'mobile':mobile
+            'topwears':topwears, 'bottomwears':bottomwears, 'mobile':mobile, 'laptop':laptop
         })
 
 #def product_detail(request):
