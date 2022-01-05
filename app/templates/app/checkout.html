@@ -17,10 +17,18 @@
         </div>
       </div>
       {% endfor %}
+
+      {% if amt < 1100 %}
       <p>Total Amount: {{amt}}</p>
       <p>Shipping Charge: {{shipping_amt}}</p>
       <p class="fw-bold">Grand Total: {{total_amt}}</p>
-    <small>Term and Condition: Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, ullam saepe! Iure optio repellat dolor velit, minus rem. Facilis cumque neque numquam laboriosam, accusantium adipisci nisi nihil in et quis?</small>
+      {% else %}
+      <p>Total Amount: {{amt}}</p>
+      <p>Shipping Charge: <span class="text-decoration-line-through">{{shipping_amt}}</span></p>
+      <p class="fw-bold">Grand Total: {{amt}}</p>
+      {% endif %}
+      
+    <small>Term and Condition: If the total purchase is More than Rs.1100 INR, There will be Free Shipping! </small>
   </div>
   <div class="col-sm-4 offset-sm-1">
     <h4>Select Shipping Address</h4>

@@ -152,6 +152,19 @@ def orders(request):
 #def change_password(request):
 # return render(request, 'app/changepassword.html')
 
+def laptop(request, data=None):
+    if data == None:
+        laptops = Product.objects.filter(category='L')
+    elif data == 'Dell' or data == 'Asus' or data == 'Lenovo' or data == 'Apple':
+        laptops = Product.objects.filter(category='L').filter(brand=data)
+    elif data == 'below':
+        laptops = Product.objects.filter(category='L').filter(discounted_price__lt=70000)  #__lt it is less than
+    elif data == 'above':
+        laptops = Product.objects.filter(category='L').filter(discounted_price__gt=70000)   #__gt it is greater than
+    elif data == 'above85000':
+        laptops = Product.objects.filter(category='L').filter(discounted_price__gt=85000) 
+    return render(request, 'app/laptop.html', {'laptops':laptops})
+
 def mobile(request, data=None):
     if data == None:
         mobiles = Product.objects.filter(category='M')

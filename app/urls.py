@@ -26,6 +26,8 @@ urlpatterns = [
     path('orders/', views.orders, name='orders'),
     #path('changepassword/', views.change_password, name='changepassword'),
 
+    path('laptop/', views.laptop, name='laptop'),
+    path('laptop/<slug:data>', views.laptop, name='laptopdata'),
     path('mobile/', views.mobile, name='mobile'),
     path('mobile/<slug:data>', views.mobile, name='mobiledata'),
     path('topwears/', views.topwears, name='topwears'),
