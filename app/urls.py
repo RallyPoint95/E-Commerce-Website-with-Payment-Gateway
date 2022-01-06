@@ -36,7 +36,7 @@ urlpatterns = [
     path('bottomwears/<slug:data>', views.bottomwears, name='bottomwearsdata'),
 
     path('registration/', views.CustomerRegistrationView.as_view(), name='customerregistration'),
-    path('accounts/login/', auth_views.LoginView.as_view(template_name='app/login.html', authentication_form=LoginForm, success_url='/home'), name='login'),
+    path('accounts/login/', auth_views.LoginView.as_view(template_name='app/login.html', authentication_form=LoginForm, next_page='home'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),                                                        
                                                                                                                                             #this success_url is written because by default PasswordChangeView will go to password_change_done when password is changed which we didnot defined
     path('passwordchange/', auth_views.PasswordChangeView.as_view(template_name='app/passwordchange.html', form_class=MyPasswordChangeForm, success_url='/passwordchangesuccess/'), name='passwordchange'),
