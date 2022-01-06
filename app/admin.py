@@ -31,5 +31,5 @@ class OrderPlacedModelAdmin(admin.ModelAdmin):
 
     def product_info(self, obj):  #this function is for to link the product details in order placed model through which tracking of product will be easy
         link = reverse('admin:app_product_change', args=[obj.product.pk])
-        return format_html('<a href="{}">{}</a>', link, obj.product.title)
+        return format_html('<a href="{}">{}</a>', link, obj.product.title) 
 
