@@ -8,6 +8,7 @@
   <div class="col-sm-8">
   <div class="card">
    <div class="card-body">
+    {% csrf_token %}
     <h3>Cart</h3>
     {% for cart in carts %}
     <hr>
@@ -59,7 +60,7 @@
         <div>
            <strong>Total</strong> <small>(including VAT)</small>
          </div>
-         <span><strong>Rs. <strong id="total_amt">{{amt}}</strong></strong></span>
+         <span><strong>Rs. <strong id="total_amt">{{total_amt}}</strong></strong></span>
        </li>
       </ul>
       {% endif %}

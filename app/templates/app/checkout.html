@@ -5,6 +5,7 @@
 <div class="container">
  <div class="row mt-5">
   <div class="col-sm-6">
+    {% csrf_token %}
     <h4>Order Summary</h4>
     <hr>
     {% for item in cart_items %}
@@ -23,9 +24,9 @@
       <p>Shipping Charge: {{shipping_amt}}</p>
       <p class="fw-bold">Grand Total: {{total_amt}}</p>
       {% else %}
-      <p>Total Amount: {{amt}}</p>
+      <p>Total Amount: {{total_amt}}</p>
       <p>Shipping Charge: <span class="text-decoration-line-through">{{shipping_amt}}</span></p>
-      <p class="fw-bold">Grand Total: {{amt}}</p>
+      <p class="fw-bold">Grand Total: {{total_amt}}</p>
       {% endif %}
       
     <small>Term and Condition: If the total purchase is More than Rs.1100 INR, There will be Free Shipping! </small>
@@ -33,7 +34,7 @@
   <div class="col-sm-4 offset-sm-1">
     <h4>Select Shipping Address</h4>
     <hr>
-    <form action="/paymentdone">
+    <form action="/paymentdone" id="myform"> <!-- this myform id is written sothat it is saved in database when payment is done -->
       {% for ad in add %}
       <div class="card">
         <div class="card-body">
@@ -48,10 +49,53 @@
         </div>
         {% endfor %}
         <div class="text-end">
-          <button type="submit" class="btn btn-warning mt-3 px-5 fw-bold">Continue</button>
+          <!--<button type="submit" class="btn btn-warning mt-3 px-5 fw-bold">Continue</button>-->
+          <!-- Set up a container element for the button -->
+          <div id="paypal-button-container"></div>
         </div>
       </form>
     </div>
   </div>
 </div>
 {% endblock main-content %}
+
+{% block payment-gateway %} 
+  <!-- Include the PayPal JavaScript SDK -->
+  <script src="https://www.paypal.com/sdk/js?client-id=ATg5242wfDQ45O71Yj9VccEdGmyxPpSWnbBlPLLxVWVJs4Eit_lQKsWkyIBGxwJLeiEiZf0lPyloBv0j&currency=USD"></script>
+
+  <script>
+      // Render the PayPal button into #paypal-button-container
+      paypal.Buttons({
+
+          // Set up the transaction
+          createOrder: function(data, actions) {
+              return actions.order.create({
+                  purchase_units: [{
+                      amount: {
+                          value: '{{total_amt}}'
+                      }
+                  }]
+              });
+          },
+
+          // Finalize the transaction
+          onApprove: function(data, actions) {
+              return actions.order.capture().then(function(orderData) {
+                  // Successful capture! For demo purposes:
+                  console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                  var transaction = orderData.purchase_units[0].payments.captures[0];
+                  alert('Transaction '+ transaction.status + ': ' + transaction.id + '\n\nSee console for all available details');
+                  document.getElementById("myform").submit() //this will submit the data to DB when payment is done
+
+                  // Replace the above to show a success message within this page, e.g.
+                  // const element = document.getElementById('paypal-button-container');
+                  // element.innerHTML = '';
+                  // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                  // Or go to another URL:  actions.redirect('thank_you.html');
+              });
+          }
+
+
+      }).render('#paypal-button-container');
+  </script>
+{% endblock payment-gateway %}

@@ -14,13 +14,16 @@ from django.utils.decorators import method_decorator  # for class based view
 
 class ProductView(View):
     def get(self, request):
+        totalitems = 0
         topwears = Product.objects.filter(category='TW')
         bottomwears = Product.objects.filter(category='BW')
         mobile = Product.objects.filter(category='M')
         laptop = Product.objects.filter(category='L')
+        if request.user.is_authenticated:
+            totalitems = len(Cart.objects.filter(user=request.user))
 
         return render(request, 'app/home.html', {
-            'topwears':topwears, 'bottomwears':bottomwears, 'mobile':mobile, 'laptop':laptop
+            'topwears':topwears, 'bottomwears':bottomwears, 'mobile':mobile, 'laptop':laptop, 'totalitems':totalitems
         })
 
 #def product_detail(request):
@@ -28,11 +31,13 @@ class ProductView(View):
 
 class ProductDetailView(View):
     def get(self, request, pk):
+        totalitems = 0
         product = Product.objects.get(pk=pk)
         item_already_in_cart = False
         if request.user.is_authenticated:
             item_already_in_cart = Cart.objects.filter(Q(product=product.id) & Q(user=request.user)).exists()
-        return render(request, 'app/productdetail.html', {'product':product, 'item_already_in_cart':item_already_in_cart})
+            totalitems = len(Cart.objects.filter(user=request.user))
+        return render(request, 'app/productdetail.html', {'product':product, 'item_already_in_cart':item_already_in_cart, 'totalitems':totalitems})
 
 @login_required
 def add_to_cart(request):
@@ -44,9 +49,11 @@ def add_to_cart(request):
 
 @login_required
 def show_cart(request):
+    totalitems = 0
     if request.user.is_authenticated:
         user = request.user
         cart = Cart.objects.filter(user=user)
+        totalitems = len(Cart.objects.filter(user=request.user))
         amt = 0.0
         shipping_amt = 70.0
         total_amt = 0.0
@@ -56,15 +63,21 @@ def show_cart(request):
                 temp_amt = (p.quantity * p.product.discounted_price)
                 amt += temp_amt
                 total_amt = amt + shipping_amt
-            return render(request, 'app/addtocart.html', {'carts':cart,'total_amt':total_amt, 'amt':amt, 'shipping_amt':shipping_amt})
+
+            if amt > 1100:
+                total_amt = amt
+        
+            return render(request, 'app/addtocart.html', {'carts':cart,'total_amt1':total_amt, 'amt':amt, 'shipping_amt':shipping_amt, 'totalitems':totalitems})
         else:
             return render(request, 'app/emptycart.html')
 
 @login_required
 def plus_cart(request):
+    totalitems = 0
     if request.method == 'GET':
         prod_id = request.GET['prod_id']
         c = Cart.objects.get(Q(product=prod_id) & Q(user=request.user))
+        totalitems = len(Cart.objects.filter(user=request.user))
         c.quantity += 1
         c.save()
         amt = 0.0
@@ -76,6 +89,9 @@ def plus_cart(request):
             temp_amt = (p.quantity * p.product.discounted_price)
             amt += temp_amt
             total_amt = amt + shipping_amt
+
+        if amt > 1100:
+            total_amt = amt
 
         data = {
             'quantity': c.quantity,
