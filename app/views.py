@@ -62,12 +62,15 @@ def show_cart(request):
             for p in cart_product:
                 temp_amt = (p.quantity * p.product.discounted_price)
                 amt += temp_amt
-                total_amt = amt + shipping_amt
+                
 
             if amt > 1100:
                 total_amt = amt
+            else:
+                total_amt = amt + shipping_amt
+                
         
-            return render(request, 'app/addtocart.html', {'carts':cart,'total_amt1':total_amt, 'amt':amt, 'shipping_amt':shipping_amt, 'totalitems':totalitems})
+            return render(request, 'app/addtocart.html', {'carts':cart,'total_amt':total_amt, 'amt':amt, 'shipping_amt':shipping_amt, 'totalitems':totalitems})
         else:
             return render(request, 'app/emptycart.html')
 
@@ -88,10 +91,12 @@ def plus_cart(request):
         for p in cart_product:
             temp_amt = (p.quantity * p.product.discounted_price)
             amt += temp_amt
-            total_amt = amt + shipping_amt
+            #total_amt = amt + shipping_amt
 
         if amt > 1100:
             total_amt = amt
+        else:
+            total_amt = amt + shipping_amt
 
         data = {
             'quantity': c.quantity,
@@ -115,6 +120,11 @@ def minus_cart(request):
         for p in cart_product:
             temp_amt = (p.quantity * p.product.discounted_price)
             amt += temp_amt
+            #total_amt = amt + shipping_amt
+
+        if amt > 1100:
+            total_amt = amt
+        else:
             total_amt = amt + shipping_amt
 
         data = {
@@ -139,6 +149,11 @@ def remove_cart(request):
         for p in cart_product:
             temp_amt = (p.quantity * p.product.discounted_price)
             amt += temp_amt
+            #total_amt = amt + shipping_amt
+
+        if amt > 1100:
+            total_amt = amt
+        else:
             total_amt = amt + shipping_amt
 
         data = {
@@ -253,7 +268,12 @@ def checkout(request):
         for p in cart_product:
             temp_amt = (p.quantity * p.product.discounted_price)
             amt += temp_amt
-        total_amt = amt + shipping_amt
+
+        if amt > 1100:
+            total_amt = amt
+        else:
+            total_amt = amt + shipping_amt
+        #total_amt = amt + shipping_amt
     return render(request, 'app/checkout.html', {'add':add, 'total_amt':total_amt, 'cart_items':cart_items, 'amt':amt, 'shipping_amt':shipping_amt})
 
 @login_required # this will restrict the user if he/she try to access the profile without logging
